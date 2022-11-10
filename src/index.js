@@ -1,4 +1,6 @@
 const { declare } = require('@babel/helper-plugin-utils');
+const { default: annotateAsPure } = require('@babel/helper-annotate-as-pure');
+
 // remember to set `cacheDirectory` to `false` when modifying this plugin
 
 const DEFAULT_ALLOWED_CALLEES = {
@@ -22,7 +24,7 @@ module.exports = declare((api, options) => {
 
   const types = api.types;
   return {
-    name: '@zendesk/babel-plugin-react-displayname',
+    name: '@probablyup/babel-plugin-react-displayname',
     visitor: {
       Program() {
         // We allow duplicate names across files,
@@ -225,7 +227,20 @@ function addDisplayNamesToFunctionComponent(types, path) {
   }
 
   const displayNameStatement = createDisplayNameStatement(types, componentIdentifiers, name);
+
   assignmentPath.insertAfter(displayNameStatement);
+
+  var inserted = assignmentPath.getNextSibling();
+
+  if (inserted.container.type === 'ExportNamedDeclaration') {
+    inserted = inserted.parentPath.getNextSibling();
+  }
+
+  if (inserted.node) {
+    // append pure annotation inside assignment
+    annotateAsPure(inserted.node.expression.right);
+  }
+
   seenDisplayNames.add(name);
 }
 
