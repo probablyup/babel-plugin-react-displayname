@@ -4,24 +4,30 @@ const { default: annotateAsPure } = require('@babel/helper-annotate-as-pure');
 // remember to set `cacheDirectory` to `false` when modifying this plugin
 
 const DEFAULT_ALLOWED_CALLEES = {
-  react: ['createContext'],
+  react: ['createContext', 'forwardRef', 'memo'],
 };
 
 const calleeModuleMapping = new Map(); // Mapping of callee name to module name
 const seenDisplayNames = new Set();
+
+function applyAllowedCallees(mapping) {
+  Object.entries(mapping).forEach(([moduleName, methodNames]) => {
+    methodNames.forEach((methodName) => {
+      calleeModuleMapping.set(methodName, moduleName);
+    });
+  });
+}
 
 module.exports = declare((api, options) => {
   api.assertVersion(7);
 
   calleeModuleMapping.clear();
 
-  Object.entries(options.allowedCallees || DEFAULT_ALLOWED_CALLEES).forEach(
-    ([moduleName, methodNames]) => {
-      methodNames.forEach((methodName) => {
-        calleeModuleMapping.set(methodName, moduleName);
-      });
-    }
-  );
+  applyAllowedCallees(DEFAULT_ALLOWED_CALLEES);
+
+  if (options.allowedCallees) {
+    applyAllowedCallees(options.allowedCallees);
+  }
 
   const types = api.types;
 
@@ -34,8 +40,15 @@ module.exports = declare((api, options) => {
         seenDisplayNames.clear();
       },
       'FunctionExpression|ArrowFunctionExpression|ObjectMethod': function (path) {
-        if (doesReturnJSX(types, path.node.body)) {
-          addDisplayNamesToFunctionComponent(types, path, options);
+        // if the parent is a call expression, make sure it's an allowed one
+        if (
+          path.parentPath && types.isCallExpression(path.parentPath.node)
+            ? isAllowedCallExpression(types, path.parentPath)
+            : true
+        ) {
+          if (doesReturnJSX(types, path.node.body)) {
+            addDisplayNamesToFunctionComponent(types, path, options);
+          }
         }
       },
       CallExpression(path) {

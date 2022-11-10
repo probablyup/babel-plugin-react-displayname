@@ -14,7 +14,6 @@ const transform = (code, pluginOptions) =>
 const transformWithAllowedCallees = (code) =>
   transform(code, {
     allowedCallees: {
-      react: ['forwardRef'],
       'react-fela': ['createComponent', 'createComponentWithProxy'],
     },
   });
@@ -119,11 +118,13 @@ describe('babelDisplayNamePlugin', () => {
   it('should add display name to call expressions', () => {
     expect(
       transform(`
+      import React from 'react'
       const Test = React.memo(() => {
         return <img/>;
       })`)
     ).toMatchInlineSnapshot(`
-      "const Test = React.memo(function _Test() {
+      "import React from 'react';
+      const Test = React.memo(() => {
         return React.createElement("img", null);
       });
       Test.displayName = /*#__PURE__*/"Test";"
@@ -131,14 +132,16 @@ describe('babelDisplayNamePlugin', () => {
 
     expect(
       transform(`
+      import React from 'react'
       const foo = {
         bar: React.memo(() => {
           return <img/>;
         })
       };`)
     ).toMatchInlineSnapshot(`
-      "const foo = {
-        bar: React.memo(function _fooBar() {
+      "import React from 'react';
+      const foo = {
+        bar: React.memo(() => {
           return React.createElement("img", null);
         })
       };
@@ -147,11 +150,13 @@ describe('babelDisplayNamePlugin', () => {
 
     expect(
       transform(`
+      import React from 'react'
       const Test = React.memo(React.createRef((props, ref) => {
         return <img/>;
       }))`)
     ).toMatchInlineSnapshot(`
-      "const Test = React.memo(React.createRef(function _Test(props, ref) {
+      "import React from 'react';
+      const Test = React.memo(React.createRef((props, ref) => {
         return React.createElement("img", null);
       }));
       Test.displayName = /*#__PURE__*/"Test";"
@@ -159,11 +164,13 @@ describe('babelDisplayNamePlugin', () => {
 
     expect(
       transform(`
+      import React from 'react'
       const Test = React.memo(function _Test(props, ref) {
         return <img/>;
       })`)
     ).toMatchInlineSnapshot(`
-      "const Test = React.memo(function _Test(props, ref) {
+      "import React from 'react';
+      const Test = React.memo(function _Test(props, ref) {
         return React.createElement("img", null);
       });
       Test.displayName = /*#__PURE__*/"Test";"
@@ -171,11 +178,13 @@ describe('babelDisplayNamePlugin', () => {
 
     expect(
       transform(`
+      import React from 'react'
       export const Test = React.memo(() => {
         return <img/>;
       })`)
     ).toMatchInlineSnapshot(`
-      "export const Test = React.memo(function _Test() {
+      "import React from 'react';
+      export const Test = React.memo(() => {
         return React.createElement("img", null);
       });
       Test.displayName = /*#__PURE__*/"Test";"
@@ -988,18 +997,48 @@ describe('babelDisplayNamePlugin', () => {
 
   it('should handle things returning React.createElement and not direct JSX', () => {
     expect(
-      transform(`
+      transformWithAllowedCallees(`
         import React from 'react';
 
-        const Foo = () => {
-          return React.createElement('div')
-        }
+        const Foo = React.forwardRef(
+          (props, ref) => {
+            return React.createElement('div', {...props, ref})
+          }
+        )
     `)
     ).toMatchInlineSnapshot(`
       "import React from 'react';
-      const Foo = () => {
-        return React.createElement('div');
-      };
+      const Foo = React.forwardRef((props, ref) => {
+        return React.createElement('div', {
+          ...props,
+          ref
+        });
+      });
+      Foo.displayName = /*#__PURE__*/"Foo";"
+    `);
+  });
+
+  it('should handle multiple wrappers', () => {
+    expect(
+      transformWithAllowedCallees(`
+        import React from 'react';
+
+        const Foo = React.memo(
+          React.forwardRef(
+            (props, ref) => {
+              return React.createElement('div', {...props, ref})
+            }
+          )
+        )
+    `)
+    ).toMatchInlineSnapshot(`
+      "import React from 'react';
+      const Foo = React.memo(React.forwardRef((props, ref) => {
+        return React.createElement('div', {
+          ...props,
+          ref
+        });
+      }));
       Foo.displayName = /*#__PURE__*/"Foo";"
     `);
   });
