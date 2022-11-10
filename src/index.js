@@ -268,18 +268,6 @@ function addDisplayNamesToFunctionComponent(types, path, options) {
   const displayNameStatement = createDisplayNameStatement(types, componentIdentifiers, name);
 
   assignmentPath.insertAfter(displayNameStatement);
-
-  let inserted = assignmentPath.getNextSibling();
-
-  if (inserted.container.type === 'ExportNamedDeclaration') {
-    inserted = inserted.parentPath.getNextSibling();
-  }
-
-  if (inserted.node) {
-    // append pure annotation inside assignment
-    annotateAsPure(inserted.node.expression.right);
-  }
-
   seenDisplayNames.add(name);
 }
 
@@ -366,11 +354,15 @@ function hasBeenAssignedNext(types, assignmentPath, pattern) {
  */
 function createDisplayNameStatement(types, componentIdentifiers, displayName) {
   const node = createMemberExpression(types, componentIdentifiers);
+  const result = types.stringLiteral(displayName);
+
+  annotateAsPure(result);
+
   return types.expressionStatement(
     types.assignmentExpression(
       '=',
       types.memberExpression(node, types.identifier('displayName')),
-      types.stringLiteral(displayName)
+      result
     )
   );
 }
