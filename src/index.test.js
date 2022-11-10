@@ -14,6 +14,7 @@ const transform = (code, pluginOptions) =>
 const transformWithAllowedCallees = (code) =>
   transform(code, {
     allowedCallees: {
+      react: ['forwardRef'],
       'react-fela': ['createComponent', 'createComponentWithProxy'],
     },
   });
@@ -982,6 +983,24 @@ describe('babelDisplayNamePlugin', () => {
       const Component2 = new Wrapper(React.createElement("img", null));
       const Component3 = async props => await React.createElement("img", null);
       const Component4 = callee(React.createElement("img", null));"
+    `);
+  });
+
+  it('should handle things returning React.createElement and not direct JSX', () => {
+    expect(
+      transform(`
+        import React from 'react';
+
+        const Foo = () => {
+          return React.createElement('div')
+        }
+    `)
+    ).toMatchInlineSnapshot(`
+      "import React from 'react';
+      const Foo = () => {
+        return React.createElement('div');
+      };
+      Foo.displayName = /*#__PURE__*/"Foo";"
     `);
   });
 

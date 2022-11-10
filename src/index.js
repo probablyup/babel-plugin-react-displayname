@@ -63,19 +63,36 @@ function doesReturnJSX(types, node) {
 
   return body.some((statement) => {
     let node;
+
     if (types.isReturnStatement(statement)) {
       node = statement.argument;
-    } else if (types.isExpressionStatement(statement)) {
+    } else if (
+      types.isExpressionStatement(statement) &&
+      !types.isCallExpression(statement.expression)
+    ) {
       node = statement.expression;
     } else {
       return false;
     }
+
+    if (
+      types.isCallExpression(node) &&
+      // detect *.createElement and count it as returning JSX
+      // this could be improved a lot but will work for the 99% case
+      types.isMemberExpression(node.callee) &&
+      node.callee.property.name === 'createElement'
+    ) {
+      return true;
+    }
+
     if (types.isConditionalExpression(node)) {
       return isJSX(types, node.consequent) || isJSX(types, node.alternate);
     }
+
     if (types.isLogicalExpression(node)) {
       return isJSX(types, node.left) || isJSX(types, node.right);
     }
+
     if (types.isArrayExpression(node)) {
       return node.elements.some((ele) => isJSX(types, ele));
     }
@@ -122,6 +139,7 @@ function isAllowedCallExpression(types, path) {
   // or namespace import (e.g. `import * as React from 'react')
   if (types.isMemberExpression(callee)) {
     const object = path.get('callee.object');
+
     return (
       object.referencesImport(moduleName, 'default') || object.referencesImport(moduleName, '*')
     );
