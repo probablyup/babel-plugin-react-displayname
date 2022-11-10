@@ -11,12 +11,16 @@ const transform = (code, pluginOptions) =>
     presets: [['@babel/preset-react', { pure: false }]],
   }).code;
 
-// transform with prefilled options
-const transformWithOptions = (code) =>
+const transformWithAllowedCallees = (code) =>
   transform(code, {
     allowedCallees: {
       'react-fela': ['createComponent', 'createComponentWithProxy'],
     },
+  });
+
+const transformWithTemplate = (code) =>
+  transform(code, {
+    template: 'Foo.%s',
   });
 
 describe('babelDisplayNamePlugin', () => {
@@ -230,7 +234,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       import { createComponent, createComponentWithProxy } from 'react-fela';
       foo.bar = createComponent();
       foo.bar1 = createComponentWithProxy();
@@ -244,7 +248,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       import { createComponent } from 'react-fela';
       foo = { bar: createComponent() }
       `)
@@ -257,7 +261,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       import { createComponent } from 'react-fela';
       const Test = createComponent();
       `)
@@ -441,19 +445,19 @@ describe('babelDisplayNamePlugin', () => {
 
   it('should not add display names for nameless functions', () => {
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       export default () => <img/>
       `)
     ).toMatchInlineSnapshot(`"export default (() => React.createElement("img", null));"`);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       (() => <img/>)()
       `)
     ).toMatchInlineSnapshot(`"(() => React.createElement("img", null))();"`);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       {() => <img/>}
       `)
     ).toMatchInlineSnapshot(`
@@ -463,7 +467,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       (function() { return <img/> })()
       `)
     ).toMatchInlineSnapshot(`
@@ -473,7 +477,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       (function test() { return <img/> })()
       `)
     ).toMatchInlineSnapshot(`
@@ -483,7 +487,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       export default function() { return <img/> }
       `)
     ).toMatchInlineSnapshot(`
@@ -495,7 +499,7 @@ describe('babelDisplayNamePlugin', () => {
 
   it('should not move elements out of their current scope', () => {
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       const Component = (props) => <>{() => <img {...props} />}</>;
       `)
     ).toMatchInlineSnapshot(`
@@ -504,7 +508,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       styledComponents.withTheme = (Component) => {
         const WithDefaultTheme = (props) => {
           return <div {...props} />;
@@ -523,7 +527,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       const Component = (options) => {
         return {
           test: function test(props) {
@@ -543,7 +547,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       const Component = (props) => ({ test: <img {...props} /> });
       `)
     ).toMatchInlineSnapshot(`
@@ -553,7 +557,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       const Component = (props) => {
         const LookUp = ((innerProps) => ({ a: () => <img {...innerProps} /> }))(props);
         return <div>{() => LookUp.a}</div>
@@ -572,7 +576,7 @@ describe('babelDisplayNamePlugin', () => {
 
   it('should add not overwrite existing display names', () => {
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       foo.bar = () => <img/>;
       foo.bar.displayName = 'test';
       `)
@@ -582,7 +586,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       foo.bar = () => <img/>;
       foo.bar.displayName = 'test';
       foo.bar = () => <img/>;
@@ -595,7 +599,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       foo.bar = () => <img/>;
       foo.bar.displayName = 'foo.bar';
       foo.bar = () => <img/>;
@@ -610,7 +614,7 @@ describe('babelDisplayNamePlugin', () => {
 
   it('should not add duplicate display names', () => {
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       () => {
         const Test = () => <img/>;
       }
@@ -627,7 +631,7 @@ describe('babelDisplayNamePlugin', () => {
 
   it('should not change assignment orders', () => {
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       foo.bar = () => <img/>;
       foo.bar = () => <br/>;
       `)
@@ -639,7 +643,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       foo.bar = () => <img/>;
       delete foo.bar;
       `)
@@ -650,7 +654,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       foo.bar = () => <img/>;
       function irrelvant() {};
       foo = null;
@@ -666,7 +670,7 @@ describe('babelDisplayNamePlugin', () => {
 
   it('should not add display name to object properties', () => {
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       const Components = {
         path: {
           test: <img/>
@@ -681,7 +685,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       const Components = () => ({
         path: {
           test: <img/>
@@ -696,7 +700,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       const Components = callee({ foo: () => <img/> });
       `)
     ).toMatchInlineSnapshot(`
@@ -706,7 +710,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       const Components = () => <div>{() => <img/>}</div>;
       `)
     ).toMatchInlineSnapshot(`
@@ -717,7 +721,7 @@ describe('babelDisplayNamePlugin', () => {
 
   it('should not add display name to createClass', () => {
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       const Component2 = _createClass(() => <img/>);
       `)
     ).toMatchInlineSnapshot(
@@ -727,7 +731,7 @@ describe('babelDisplayNamePlugin', () => {
 
   it('should not add display name to hooks', () => {
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       const Component = useMemo(() => <img/>);
       `)
     ).toMatchInlineSnapshot(`"const Component = useMemo(() => React.createElement("img", null));"`);
@@ -735,7 +739,7 @@ describe('babelDisplayNamePlugin', () => {
 
   it('should not add display name to class components', () => {
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       class Test extends React.Component {
         render() {
           return <img/>;
@@ -750,7 +754,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       class Test extends React.Component {
         notRender() {
           return <img/>;
@@ -765,7 +769,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       export class Test extends React.Component {
         render() {
           return <img/>;
@@ -780,7 +784,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       export default class Test extends React.Component {
         render() {
           return <img/>;
@@ -797,7 +801,7 @@ describe('babelDisplayNamePlugin', () => {
 
   it('should not add display name to function components', () => {
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       function Test() {
         return <img/>;
       }`)
@@ -808,7 +812,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       export function Test() {
         return <img/>;
       }`)
@@ -819,7 +823,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       export default function Test() {
         return <img/>;
       }`)
@@ -830,7 +834,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       export default function() {
         return <img/>;
       }`)
@@ -843,7 +847,7 @@ describe('babelDisplayNamePlugin', () => {
 
   it('should not add display name to unknown call expressions', () => {
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       import { createDirectionalComponent } from 'react-fela';
       foo.bar = createDirectionalComponent();
       `)
@@ -853,7 +857,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       import fela from 'react-fela';
       foo.bar = fela.createDirectionalComponent();
       `)
@@ -863,7 +867,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       import * as fela from 'react-fela';
       foo.bar = fela.createDirectionalComponent();
       `)
@@ -875,7 +879,7 @@ describe('babelDisplayNamePlugin', () => {
 
   it('should not add display name to immediately invoked function expressions', () => {
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       const Test = (function () {
         return <img/>;
       })()`)
@@ -886,7 +890,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       const Test = (function test() {
         return <img/>;
       })()`)
@@ -897,7 +901,7 @@ describe('babelDisplayNamePlugin', () => {
     `);
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       const Test = (() => {
         return <img/>;
       })()`)
@@ -910,7 +914,7 @@ describe('babelDisplayNamePlugin', () => {
 
   it('should not add display name to functions within jsx elements', () => {
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       const Test = callee(<div>{() => <img/>}</div>);
       `)
     ).toMatchInlineSnapshot(
@@ -918,7 +922,7 @@ describe('babelDisplayNamePlugin', () => {
     );
 
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       const Test = () => <img foo={{ bar: () => <img/> }} />;
       `)
     ).toMatchInlineSnapshot(`
@@ -933,7 +937,7 @@ describe('babelDisplayNamePlugin', () => {
 
   it('should not add display name to non react components', () => {
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       // foo.bar = createComponent();
       const Component = '';
       const Component1 = null;
@@ -965,7 +969,7 @@ describe('babelDisplayNamePlugin', () => {
 
   it('should not add display name to other assignments', () => {
     expect(
-      transformWithOptions(`
+      transformWithAllowedCallees(`
       const Component = <img/>;
       const Component1 = [<img/>];
       const Component2 = new Wrapper(<img/>);
@@ -978,6 +982,20 @@ describe('babelDisplayNamePlugin', () => {
       const Component2 = new Wrapper(React.createElement("img", null));
       const Component3 = async props => await React.createElement("img", null);
       const Component4 = callee(React.createElement("img", null));"
+    `);
+  });
+
+  it('should apply a template if provided', () => {
+    expect(
+      transformWithTemplate(`
+      const Test = function() {
+        return <img/>;
+      }`)
+    ).toMatchInlineSnapshot(`
+      "const Test = function () {
+        return React.createElement("img", null);
+      };
+      Test.displayName = /*#__PURE__*/"Foo.Test";"
     `);
   });
 });

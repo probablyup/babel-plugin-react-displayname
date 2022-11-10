@@ -14,6 +14,7 @@ module.exports = declare((api, options) => {
   api.assertVersion(7);
 
   calleeModuleMapping.clear();
+
   Object.entries(options.allowedCallees || DEFAULT_ALLOWED_CALLEES).forEach(
     ([moduleName, methodNames]) => {
       methodNames.forEach((methodName) => {
@@ -23,6 +24,7 @@ module.exports = declare((api, options) => {
   );
 
   const types = api.types;
+
   return {
     name: '@probablyup/babel-plugin-react-displayname',
     visitor: {
@@ -33,12 +35,12 @@ module.exports = declare((api, options) => {
       },
       'FunctionExpression|ArrowFunctionExpression|ObjectMethod': function (path) {
         if (doesReturnJSX(types, path.node.body)) {
-          addDisplayNamesToFunctionComponent(types, path);
+          addDisplayNamesToFunctionComponent(types, path, options);
         }
       },
       CallExpression(path) {
         if (isAllowedCallExpression(types, path)) {
-          addDisplayNamesToFunctionComponent(types, path);
+          addDisplayNamesToFunctionComponent(types, path, options);
         }
       },
     },
@@ -136,8 +138,9 @@ function isAllowedCallExpression(types, path) {
  *
  * @param {Types} types content of @babel/types package
  * @param {Path} path path of function
+ * @param {Object} options
  */
-function addDisplayNamesToFunctionComponent(types, path) {
+function addDisplayNamesToFunctionComponent(types, path, options) {
   const componentIdentifiers = [];
   if (path.node.key) {
     componentIdentifiers.push({ id: path.node.key });
@@ -210,7 +213,12 @@ function addDisplayNamesToFunctionComponent(types, path) {
     return;
   }
 
-  const name = generateDisplayName(types, componentIdentifiers);
+  let name = generateDisplayName(types, componentIdentifiers);
+
+  if (options.template) {
+    name = options.template.replace(/%s/, name);
+  }
+
   const pattern = `${name}.displayName`;
 
   // disallow duplicate names if they were assigned in different scopes
@@ -230,7 +238,7 @@ function addDisplayNamesToFunctionComponent(types, path) {
 
   assignmentPath.insertAfter(displayNameStatement);
 
-  var inserted = assignmentPath.getNextSibling();
+  let inserted = assignmentPath.getNextSibling();
 
   if (inserted.container.type === 'ExportNamedDeclaration') {
     inserted = inserted.parentPath.getNextSibling();
