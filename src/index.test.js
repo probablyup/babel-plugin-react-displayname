@@ -28,10 +28,9 @@ describe('babelDisplayNamePlugin', () => {
       }`)
     ).toMatchInlineSnapshot(`
       "foo.bar = function () {
-        return React.createElement(\\"img\\", null);
+        return React.createElement("img", null);
       };
-
-      foo.bar.displayName = \\"foo.bar\\";"
+      foo.bar.displayName = "foo.bar";"
     `);
 
     expect(
@@ -41,10 +40,9 @@ describe('babelDisplayNamePlugin', () => {
       }`)
     ).toMatchInlineSnapshot(`
       "const Test = function () {
-        return React.createElement(\\"img\\", null);
+        return React.createElement("img", null);
       };
-
-      Test.displayName = \\"Test\\";"
+      Test.displayName = "Test";"
     `);
   });
 
@@ -56,10 +54,9 @@ describe('babelDisplayNamePlugin', () => {
       }`)
     ).toMatchInlineSnapshot(`
       "foo.bar = function Foo() {
-        return React.createElement(\\"img\\", null);
+        return React.createElement("img", null);
       };
-
-      foo.bar.displayName = \\"foo.bar\\";"
+      foo.bar.displayName = "foo.bar";"
     `);
 
     expect(
@@ -69,10 +66,9 @@ describe('babelDisplayNamePlugin', () => {
       }`)
     ).toMatchInlineSnapshot(`
       "const Test = function Foo() {
-        return React.createElement(\\"img\\", null);
+        return React.createElement("img", null);
       };
-
-      Test.displayName = \\"Test\\";"
+      Test.displayName = "Test";"
     `);
   });
 
@@ -84,10 +80,9 @@ describe('babelDisplayNamePlugin', () => {
       }`)
     ).toMatchInlineSnapshot(`
       "foo.bar = () => {
-        return React.createElement(\\"img\\", null);
+        return React.createElement("img", null);
       };
-
-      foo.bar.displayName = \\"foo.bar\\";"
+      foo.bar.displayName = "foo.bar";"
     `);
 
     expect(
@@ -97,25 +92,23 @@ describe('babelDisplayNamePlugin', () => {
       };`)
     ).toMatchInlineSnapshot(`
       "const Test = () => {
-        return React.createElement(\\"img\\", null);
+        return React.createElement("img", null);
       };
-
-      Test.displayName = \\"Test\\";"
+      Test.displayName = "Test";"
     `);
 
     expect(
       transform(`
       const Test = () => <img/>;`)
     ).toMatchInlineSnapshot(`
-      "const Test = () => React.createElement(\\"img\\", null);
-
-      Test.displayName = \\"Test\\";"
+      "const Test = () => React.createElement("img", null);
+      Test.displayName = "Test";"
     `);
 
     expect(
       transform(`
       const Test = () => () => <img/>;`)
-    ).toMatchInlineSnapshot(`"const Test = () => () => React.createElement(\\"img\\", null);"`);
+    ).toMatchInlineSnapshot(`"const Test = () => () => React.createElement("img", null);"`);
   });
 
   it('should add display name to call expressions', () => {
@@ -126,9 +119,9 @@ describe('babelDisplayNamePlugin', () => {
       })`)
     ).toMatchInlineSnapshot(`
       "const Test = React.memo(function _Test() {
-        return React.createElement(\\"img\\", null);
+        return React.createElement("img", null);
       });
-      Test.displayName = \\"Test\\";"
+      Test.displayName = "Test";"
     `);
 
     expect(
@@ -141,10 +134,10 @@ describe('babelDisplayNamePlugin', () => {
     ).toMatchInlineSnapshot(`
       "const foo = {
         bar: React.memo(function _fooBar() {
-          return React.createElement(\\"img\\", null);
+          return React.createElement("img", null);
         })
       };
-      foo.bar.displayName = \\"foo.bar\\";"
+      foo.bar.displayName = "foo.bar";"
     `);
 
     expect(
@@ -154,9 +147,9 @@ describe('babelDisplayNamePlugin', () => {
       }))`)
     ).toMatchInlineSnapshot(`
       "const Test = React.memo(React.createRef(function _Test(props, ref) {
-        return React.createElement(\\"img\\", null);
+        return React.createElement("img", null);
       }));
-      Test.displayName = \\"Test\\";"
+      Test.displayName = "Test";"
     `);
 
     expect(
@@ -166,9 +159,9 @@ describe('babelDisplayNamePlugin', () => {
       })`)
     ).toMatchInlineSnapshot(`
       "const Test = React.memo(function _Test(props, ref) {
-        return React.createElement(\\"img\\", null);
+        return React.createElement("img", null);
       });
-      Test.displayName = \\"Test\\";"
+      Test.displayName = "Test";"
     `);
 
     expect(
@@ -178,9 +171,9 @@ describe('babelDisplayNamePlugin', () => {
       })`)
     ).toMatchInlineSnapshot(`
       "export const Test = React.memo(function _Test() {
-        return React.createElement(\\"img\\", null);
+        return React.createElement("img", null);
       });
-      Test.displayName = \\"Test\\";"
+      Test.displayName = "Test";"
     `);
   });
 
@@ -193,7 +186,7 @@ describe('babelDisplayNamePlugin', () => {
     ).toMatchInlineSnapshot(`
       "import { createContext } from 'react';
       const FeatureContext = createContext();
-      FeatureContext.displayName = \\"FeatureContext\\";"
+      FeatureContext.displayName = "FeatureContext";"
     `);
 
     expect(
@@ -204,7 +197,7 @@ describe('babelDisplayNamePlugin', () => {
     ).toMatchInlineSnapshot(`
       "import React from 'react';
       const FeatureContext = React.createContext();
-      FeatureContext.displayName = \\"FeatureContext\\";"
+      FeatureContext.displayName = "FeatureContext";"
     `);
 
     expect(
@@ -215,7 +208,7 @@ describe('babelDisplayNamePlugin', () => {
     ).toMatchInlineSnapshot(`
       "import * as React from 'react';
       const FeatureContext = React.createContext();
-      FeatureContext.displayName = \\"FeatureContext\\";"
+      FeatureContext.displayName = "FeatureContext";"
     `);
 
     expect(
@@ -233,7 +226,7 @@ describe('babelDisplayNamePlugin', () => {
     ).toMatchInlineSnapshot(`
       "import React from 'path/to/react';
       const FeatureContext = React.createContext();
-      FeatureContext.displayName = \\"FeatureContext\\";"
+      FeatureContext.displayName = "FeatureContext";"
     `);
 
     expect(
@@ -245,9 +238,9 @@ describe('babelDisplayNamePlugin', () => {
     ).toMatchInlineSnapshot(`
       "import { createComponent, createComponentWithProxy } from 'react-fela';
       foo.bar = createComponent();
-      foo.bar.displayName = \\"foo.bar\\";
+      foo.bar.displayName = "foo.bar";
       foo.bar1 = createComponentWithProxy();
-      foo.bar1.displayName = \\"foo.bar1\\";"
+      foo.bar1.displayName = "foo.bar1";"
     `);
 
     expect(
@@ -260,7 +253,7 @@ describe('babelDisplayNamePlugin', () => {
       foo = {
         bar: createComponent()
       };
-      foo.bar.displayName = \\"foo.bar\\";"
+      foo.bar.displayName = "foo.bar";"
     `);
 
     expect(
@@ -271,7 +264,7 @@ describe('babelDisplayNamePlugin', () => {
     ).toMatchInlineSnapshot(`
       "import { createComponent } from 'react-fela';
       const Test = createComponent();
-      Test.displayName = \\"Test\\";"
+      Test.displayName = "Test";"
     `);
   });
 
@@ -286,10 +279,10 @@ describe('babelDisplayNamePlugin', () => {
     ).toMatchInlineSnapshot(`
       "const Components = {
         path: {
-          test: () => React.createElement(\\"img\\", null)
+          test: () => React.createElement("img", null)
         }
       };
-      Components.path.test.displayName = \\"Components.path.test\\";"
+      Components.path.test.displayName = "Components.path.test";"
     `);
 
     expect(
@@ -304,10 +297,10 @@ describe('babelDisplayNamePlugin', () => {
       "const pathStr = 'path';
       const Components = {
         [pathStr]: {
-          test: () => React.createElement(\\"img\\", null)
+          test: () => React.createElement("img", null)
         }
       };
-      Components[pathStr].test.displayName = \\"Components[pathStr].test\\";"
+      Components[pathStr].test.displayName = "Components[pathStr].test";"
     `);
 
     expect(
@@ -318,10 +311,10 @@ describe('babelDisplayNamePlugin', () => {
     ).toMatchInlineSnapshot(`
       "const Components = {
         test: function () {
-          return React.createElement(\\"img\\", null);
+          return React.createElement("img", null);
         }
       };
-      Components.test.displayName = \\"Components.test\\";"
+      Components.test.displayName = "Components.test";"
     `);
 
     expect(
@@ -332,10 +325,10 @@ describe('babelDisplayNamePlugin', () => {
     ).toMatchInlineSnapshot(`
       "const Components = {
         test: function Foo() {
-          return React.createElement(\\"img\\", null);
+          return React.createElement("img", null);
         }
       };
-      Components.test.displayName = \\"Components.test\\";"
+      Components.test.displayName = "Components.test";"
     `);
   });
 
@@ -354,12 +347,11 @@ describe('babelDisplayNamePlugin', () => {
       "const Components = {
         path: {
           test(props) {
-            return React.createElement(\\"img\\", null);
+            return React.createElement("img", null);
           }
-
         }
       };
-      Components.path.test.displayName = \\"Components.path.test\\";"
+      Components.path.test.displayName = "Components.path.test";"
     `);
 
     expect(
@@ -376,12 +368,11 @@ describe('babelDisplayNamePlugin', () => {
       "const Components = {
         [foo[bar.foobar].baz]: {
           test(props) {
-            return React.createElement(\\"img\\", null);
+            return React.createElement("img", null);
           }
-
         }
       };
-      Components[foo[bar.foobar].baz].test.displayName = \\"Components[foo[bar.foobar].baz].test\\";"
+      Components[foo[bar.foobar].baz].test.displayName = "Components[foo[bar.foobar].baz].test";"
     `);
   });
 
@@ -391,9 +382,8 @@ describe('babelDisplayNamePlugin', () => {
       const Component = (props) => <><img {...props} /></>;
       `)
     ).toMatchInlineSnapshot(`
-      "const Component = props => React.createElement(React.Fragment, null, React.createElement(\\"img\\", props));
-
-      Component.displayName = \\"Component\\";"
+      "const Component = props => React.createElement(React.Fragment, null, React.createElement("img", props));
+      Component.displayName = "Component";"
     `);
   });
 
@@ -407,23 +397,16 @@ describe('babelDisplayNamePlugin', () => {
 
       `)
     ).toMatchInlineSnapshot(`
-      "const Component = () => false ? React.createElement(\\"img\\", null) : null;
-
-      Component.displayName = \\"Component\\";
-
-      const Component1 = () => React.createElement(\\"img\\", null) || null;
-
-      Component1.displayName = \\"Component1\\";
-
-      const Component2 = () => [React.createElement(\\"img\\", null)];
-
-      Component2.displayName = \\"Component2\\";
-
+      "const Component = () => false ? React.createElement("img", null) : null;
+      Component.displayName = "Component";
+      const Component1 = () => React.createElement("img", null) || null;
+      Component1.displayName = "Component1";
+      const Component2 = () => [React.createElement("img", null)];
+      Component2.displayName = "Component2";
       const Component3 = () => {
-        return React.createElement(\\"img\\", null);
+        return React.createElement("img", null);
       };
-
-      Component3.displayName = \\"Component3\\";"
+      Component3.displayName = "Component3";"
     `);
   });
 
@@ -433,9 +416,8 @@ describe('babelDisplayNamePlugin', () => {
       var Test = () => <img/>
       `)
     ).toMatchInlineSnapshot(`
-      "var Test = () => React.createElement(\\"img\\", null);
-
-      Test.displayName = \\"Test\\";"
+      "var Test = () => React.createElement("img", null);
+      Test.displayName = "Test";"
     `);
 
     expect(
@@ -443,9 +425,8 @@ describe('babelDisplayNamePlugin', () => {
       let Test = () => <img/>
       `)
     ).toMatchInlineSnapshot(`
-      "let Test = () => React.createElement(\\"img\\", null);
-
-      Test.displayName = \\"Test\\";"
+      "let Test = () => React.createElement("img", null);
+      Test.displayName = "Test";"
     `);
 
     expect(
@@ -453,8 +434,8 @@ describe('babelDisplayNamePlugin', () => {
       export const Test = () => <img/>
       `)
     ).toMatchInlineSnapshot(`
-      "export const Test = () => React.createElement(\\"img\\", null);
-      Test.displayName = \\"Test\\";"
+      "export const Test = () => React.createElement("img", null);
+      Test.displayName = "Test";"
     `);
   });
 
@@ -463,13 +444,13 @@ describe('babelDisplayNamePlugin', () => {
       transformWithOptions(`
       export default () => <img/>
       `)
-    ).toMatchInlineSnapshot(`"export default (() => React.createElement(\\"img\\", null));"`);
+    ).toMatchInlineSnapshot(`"export default (() => React.createElement("img", null));"`);
 
     expect(
       transformWithOptions(`
       (() => <img/>)()
       `)
-    ).toMatchInlineSnapshot(`"(() => React.createElement(\\"img\\", null))();"`);
+    ).toMatchInlineSnapshot(`"(() => React.createElement("img", null))();"`);
 
     expect(
       transformWithOptions(`
@@ -477,7 +458,7 @@ describe('babelDisplayNamePlugin', () => {
       `)
     ).toMatchInlineSnapshot(`
       "{
-        () => React.createElement(\\"img\\", null);
+        () => React.createElement("img", null);
       }"
     `);
 
@@ -487,7 +468,7 @@ describe('babelDisplayNamePlugin', () => {
       `)
     ).toMatchInlineSnapshot(`
       "(function () {
-        return React.createElement(\\"img\\", null);
+        return React.createElement("img", null);
       })();"
     `);
 
@@ -497,7 +478,7 @@ describe('babelDisplayNamePlugin', () => {
       `)
     ).toMatchInlineSnapshot(`
       "(function test() {
-        return React.createElement(\\"img\\", null);
+        return React.createElement("img", null);
       })();"
     `);
 
@@ -507,7 +488,7 @@ describe('babelDisplayNamePlugin', () => {
       `)
     ).toMatchInlineSnapshot(`
       "export default function () {
-        return React.createElement(\\"img\\", null);
+        return React.createElement("img", null);
       }"
     `);
   });
@@ -518,9 +499,8 @@ describe('babelDisplayNamePlugin', () => {
       const Component = (props) => <>{() => <img {...props} />}</>;
       `)
     ).toMatchInlineSnapshot(`
-      "const Component = props => React.createElement(React.Fragment, null, () => React.createElement(\\"img\\", props));
-
-      Component.displayName = \\"Component\\";"
+      "const Component = props => React.createElement(React.Fragment, null, () => React.createElement("img", props));
+      Component.displayName = "Component";"
     `);
 
     expect(
@@ -535,10 +515,9 @@ describe('babelDisplayNamePlugin', () => {
     ).toMatchInlineSnapshot(`
       "styledComponents.withTheme = Component => {
         const WithDefaultTheme = props => {
-          return React.createElement(\\"div\\", props);
+          return React.createElement("div", props);
         };
-
-        WithDefaultTheme.displayName = \\"WithDefaultTheme\\";
+        WithDefaultTheme.displayName = "WithDefaultTheme";
         return WithDefaultTheme;
       };"
     `);
@@ -557,7 +536,7 @@ describe('babelDisplayNamePlugin', () => {
       "const Component = options => {
         return {
           test: function test(props) {
-            return React.createElement(\\"img\\", null);
+            return React.createElement("img", null);
           }
         };
       };"
@@ -569,7 +548,7 @@ describe('babelDisplayNamePlugin', () => {
       `)
     ).toMatchInlineSnapshot(`
       "const Component = props => ({
-        test: React.createElement(\\"img\\", props)
+        test: React.createElement("img", props)
       });"
     `);
 
@@ -583,13 +562,11 @@ describe('babelDisplayNamePlugin', () => {
     ).toMatchInlineSnapshot(`
       "const Component = props => {
         const LookUp = (innerProps => ({
-          a: () => React.createElement(\\"img\\", innerProps)
+          a: () => React.createElement("img", innerProps)
         }))(props);
-
-        return React.createElement(\\"div\\", null, () => LookUp.a);
+        return React.createElement("div", null, () => LookUp.a);
       };
-
-      Component.displayName = \\"Component\\";"
+      Component.displayName = "Component";"
     `);
   });
 
@@ -600,8 +577,7 @@ describe('babelDisplayNamePlugin', () => {
       foo.bar.displayName = 'test';
       `)
     ).toMatchInlineSnapshot(`
-      "foo.bar = () => React.createElement(\\"img\\", null);
-
+      "foo.bar = () => React.createElement("img", null);
       foo.bar.displayName = 'test';"
     `);
 
@@ -612,13 +588,10 @@ describe('babelDisplayNamePlugin', () => {
       foo.bar = () => <img/>;
       `)
     ).toMatchInlineSnapshot(`
-      "foo.bar = () => React.createElement(\\"img\\", null);
-
+      "foo.bar = () => React.createElement("img", null);
       foo.bar.displayName = 'test';
-
-      foo.bar = () => React.createElement(\\"img\\", null);
-
-      foo.bar.displayName = \\"foo.bar\\";"
+      foo.bar = () => React.createElement("img", null);
+      foo.bar.displayName = "foo.bar";"
     `);
 
     expect(
@@ -628,13 +601,10 @@ describe('babelDisplayNamePlugin', () => {
       foo.bar = () => <img/>;
       `)
     ).toMatchInlineSnapshot(`
-      "foo.bar = () => React.createElement(\\"img\\", null);
-
+      "foo.bar = () => React.createElement("img", null);
       foo.bar.displayName = 'foo.bar';
-
-      foo.bar = () => React.createElement(\\"img\\", null);
-
-      foo.bar.displayName = \\"foo.bar\\";"
+      foo.bar = () => React.createElement("img", null);
+      foo.bar.displayName = "foo.bar";"
     `);
   });
 
@@ -648,12 +618,10 @@ describe('babelDisplayNamePlugin', () => {
       `)
     ).toMatchInlineSnapshot(`
       "() => {
-        const Test = () => React.createElement(\\"img\\", null);
-
-        Test.displayName = \\"Test\\";
+        const Test = () => React.createElement("img", null);
+        Test.displayName = "Test";
       };
-
-      const Test = () => React.createElement(\\"img\\", null);"
+      const Test = () => React.createElement("img", null);"
     `);
   });
 
@@ -664,13 +632,10 @@ describe('babelDisplayNamePlugin', () => {
       foo.bar = () => <br/>;
       `)
     ).toMatchInlineSnapshot(`
-      "foo.bar = () => React.createElement(\\"img\\", null);
-
-      foo.bar.displayName = \\"foo.bar\\";
-
-      foo.bar = () => React.createElement(\\"br\\", null);
-
-      foo.bar.displayName = \\"foo.bar\\";"
+      "foo.bar = () => React.createElement("img", null);
+      foo.bar.displayName = "foo.bar";
+      foo.bar = () => React.createElement("br", null);
+      foo.bar.displayName = "foo.bar";"
     `);
 
     expect(
@@ -679,9 +644,8 @@ describe('babelDisplayNamePlugin', () => {
       delete foo.bar;
       `)
     ).toMatchInlineSnapshot(`
-      "foo.bar = () => React.createElement(\\"img\\", null);
-
-      foo.bar.displayName = \\"foo.bar\\";
+      "foo.bar = () => React.createElement("img", null);
+      foo.bar.displayName = "foo.bar";
       delete foo.bar;"
     `);
 
@@ -692,12 +656,9 @@ describe('babelDisplayNamePlugin', () => {
       foo = null;
       `)
     ).toMatchInlineSnapshot(`
-      "foo.bar = () => React.createElement(\\"img\\", null);
-
-      foo.bar.displayName = \\"foo.bar\\";
-
+      "foo.bar = () => React.createElement("img", null);
+      foo.bar.displayName = "foo.bar";
       function irrelvant() {}
-
       ;
       foo = null;"
     `);
@@ -714,7 +675,7 @@ describe('babelDisplayNamePlugin', () => {
     ).toMatchInlineSnapshot(`
       "const Components = {
         path: {
-          test: React.createElement(\\"img\\", null)
+          test: React.createElement("img", null)
         }
       };"
     `);
@@ -729,7 +690,7 @@ describe('babelDisplayNamePlugin', () => {
     ).toMatchInlineSnapshot(`
       "const Components = () => ({
         path: {
-          test: React.createElement(\\"img\\", null)
+          test: React.createElement("img", null)
         }
       });"
     `);
@@ -740,7 +701,7 @@ describe('babelDisplayNamePlugin', () => {
       `)
     ).toMatchInlineSnapshot(`
       "const Components = callee({
-        foo: () => React.createElement(\\"img\\", null)
+        foo: () => React.createElement("img", null)
       });"
     `);
 
@@ -749,9 +710,8 @@ describe('babelDisplayNamePlugin', () => {
       const Components = () => <div>{() => <img/>}</div>;
       `)
     ).toMatchInlineSnapshot(`
-      "const Components = () => React.createElement(\\"div\\", null, () => React.createElement(\\"img\\", null));
-
-      Components.displayName = \\"Components\\";"
+      "const Components = () => React.createElement("div", null, () => React.createElement("img", null));
+      Components.displayName = "Components";"
     `);
   });
 
@@ -761,7 +721,7 @@ describe('babelDisplayNamePlugin', () => {
       const Component2 = _createClass(() => <img/>);
       `)
     ).toMatchInlineSnapshot(
-      `"const Component2 = _createClass(() => React.createElement(\\"img\\", null));"`
+      `"const Component2 = _createClass(() => React.createElement("img", null));"`
     );
   });
 
@@ -770,9 +730,7 @@ describe('babelDisplayNamePlugin', () => {
       transformWithOptions(`
       const Component = useMemo(() => <img/>);
       `)
-    ).toMatchInlineSnapshot(
-      `"const Component = useMemo(() => React.createElement(\\"img\\", null));"`
-    );
+    ).toMatchInlineSnapshot(`"const Component = useMemo(() => React.createElement("img", null));"`);
   });
 
   it('should not add display name to class components', () => {
@@ -786,9 +744,8 @@ describe('babelDisplayNamePlugin', () => {
     ).toMatchInlineSnapshot(`
       "class Test extends React.Component {
         render() {
-          return React.createElement(\\"img\\", null);
+          return React.createElement("img", null);
         }
-
       }"
     `);
 
@@ -802,9 +759,8 @@ describe('babelDisplayNamePlugin', () => {
     ).toMatchInlineSnapshot(`
       "class Test extends React.Component {
         notRender() {
-          return React.createElement(\\"img\\", null);
+          return React.createElement("img", null);
         }
-
       }"
     `);
 
@@ -818,9 +774,8 @@ describe('babelDisplayNamePlugin', () => {
     ).toMatchInlineSnapshot(`
       "export class Test extends React.Component {
         render() {
-          return React.createElement(\\"img\\", null);
+          return React.createElement("img", null);
         }
-
       }"
     `);
 
@@ -834,9 +789,8 @@ describe('babelDisplayNamePlugin', () => {
     ).toMatchInlineSnapshot(`
       "export default class Test extends React.Component {
         render() {
-          return React.createElement(\\"img\\", null);
+          return React.createElement("img", null);
         }
-
       }"
     `);
   });
@@ -849,7 +803,7 @@ describe('babelDisplayNamePlugin', () => {
       }`)
     ).toMatchInlineSnapshot(`
       "function Test() {
-        return React.createElement(\\"img\\", null);
+        return React.createElement("img", null);
       }"
     `);
 
@@ -860,7 +814,7 @@ describe('babelDisplayNamePlugin', () => {
       }`)
     ).toMatchInlineSnapshot(`
       "export function Test() {
-        return React.createElement(\\"img\\", null);
+        return React.createElement("img", null);
       }"
     `);
 
@@ -871,7 +825,7 @@ describe('babelDisplayNamePlugin', () => {
       }`)
     ).toMatchInlineSnapshot(`
       "export default function Test() {
-        return React.createElement(\\"img\\", null);
+        return React.createElement("img", null);
       }"
     `);
 
@@ -882,7 +836,7 @@ describe('babelDisplayNamePlugin', () => {
       }`)
     ).toMatchInlineSnapshot(`
       "export default function () {
-        return React.createElement(\\"img\\", null);
+        return React.createElement("img", null);
       }"
     `);
   });
@@ -927,7 +881,7 @@ describe('babelDisplayNamePlugin', () => {
       })()`)
     ).toMatchInlineSnapshot(`
       "const Test = function () {
-        return React.createElement(\\"img\\", null);
+        return React.createElement("img", null);
       }();"
     `);
 
@@ -938,7 +892,7 @@ describe('babelDisplayNamePlugin', () => {
       })()`)
     ).toMatchInlineSnapshot(`
       "const Test = function test() {
-        return React.createElement(\\"img\\", null);
+        return React.createElement("img", null);
       }();"
     `);
 
@@ -949,7 +903,7 @@ describe('babelDisplayNamePlugin', () => {
       })()`)
     ).toMatchInlineSnapshot(`
       "const Test = (() => {
-        return React.createElement(\\"img\\", null);
+        return React.createElement("img", null);
       })();"
     `);
   });
@@ -960,7 +914,7 @@ describe('babelDisplayNamePlugin', () => {
       const Test = callee(<div>{() => <img/>}</div>);
       `)
     ).toMatchInlineSnapshot(
-      `"const Test = callee(React.createElement(\\"div\\", null, () => React.createElement(\\"img\\", null)));"`
+      `"const Test = callee(React.createElement("div", null, () => React.createElement("img", null)));"`
     );
 
     expect(
@@ -968,13 +922,12 @@ describe('babelDisplayNamePlugin', () => {
       const Test = () => <img foo={{ bar: () => <img/> }} />;
       `)
     ).toMatchInlineSnapshot(`
-      "const Test = () => React.createElement(\\"img\\", {
+      "const Test = () => React.createElement("img", {
         foo: {
-          bar: () => React.createElement(\\"img\\", null)
+          bar: () => React.createElement("img", null)
         }
       });
-
-      Test.displayName = \\"Test\\";"
+      Test.displayName = "Test";"
     `);
   });
 
@@ -1006,7 +959,6 @@ describe('babelDisplayNamePlugin', () => {
         foo: 'bar'
       };
       const Component8 = new Wrapper();
-
       const Component9 = () => {};"
     `);
   });
@@ -1021,13 +973,11 @@ describe('babelDisplayNamePlugin', () => {
       const Component4 = callee(<img/>);
       `)
     ).toMatchInlineSnapshot(`
-      "const Component = React.createElement(\\"img\\", null);
-      const Component1 = [React.createElement(\\"img\\", null)];
-      const Component2 = new Wrapper(React.createElement(\\"img\\", null));
-
-      const Component3 = async props => await React.createElement(\\"img\\", null);
-
-      const Component4 = callee(React.createElement(\\"img\\", null));"
+      "const Component = React.createElement("img", null);
+      const Component1 = [React.createElement("img", null)];
+      const Component2 = new Wrapper(React.createElement("img", null));
+      const Component3 = async props => await React.createElement("img", null);
+      const Component4 = callee(React.createElement("img", null));"
     `);
   });
 });

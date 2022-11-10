@@ -1,21 +1,24 @@
-# @zendesk/babel-plugin-react-displayname
+# @probablyup/babel-plugin-react-displayname
 
-![Jest test CI](https://github.com/zendesk/babel-plugin-react-displayname/workflows/Jest%20test%20CI/badge.svg)
+![Jest test CI](https://github.com/probablyup/babel-plugin-react-displayname/workflows/Jest%20test%20CI/badge.svg)
 
-> Automatically generate display names for React components
+> Automatically generate display names for React components, while retaining tree-shaking support in bundlers.
 
-## Installation
+## Setup
 
-Internal usage:
-```
-yarn add @zendesk/babel-plugin-react-displayname
-```
+1. Install the dependency
 
-Public usage: Copy `src/index.js` to a local file
-```
-@zendesk/babel-plugin-react-displayname: "file:../path/to/file"
-```
+  ```sh
+  yarn add --dev @probablyup/babel-plugin-react-displayname
+  ```
 
+2. Add the plugin to your babel configuration
+
+  ```json
+  {
+    "plugins": ["@probablyup/babel-plugin-react-displayname"]
+  }
+  ```
 ## Why use this?
 
 React dev tools infer component names from the name of the function or class that defines the component. However, it does not work when anonymous functions are used.
@@ -26,19 +29,19 @@ This plugin fixes that by automatically generating the [displayName](https://rea
 
 This plugin converts the following:
 
-```js
+```tsx
 const Linebreak = React.memo(() => {
-    return <br/>;
+    return <br />;
 });
 
 const Img = function () {
-    return <img/>;
+    return <img />;
 }
 ```
 
 into:
 
-```js
+```tsx
 const Linebreak = React.memo(function _Linebreak() {
   return <br />;
 });
@@ -50,42 +53,6 @@ const Img = function () {
 Img.displayName = "Img";
 ```
 
-## Install
-
-Using npm:
-
-```sh
-npm install --save-dev @zendesk/babel-plugin-react-displayname
-```
-
-or using yarn:
-
-```sh
-yarn add @zendesk/babel-plugin-react-displayname --dev
-```
-
-## Usage
-
-### With a configuration file (Recommended)
-
-Without options:
-```json
-{
-  "plugins": ["@zendesk/babel-plugin-react-displayname"]
-}
-```
-
-With options:
-```json
-{
-  "plugins": ["@zendesk/babel-plugin-react-displayname", {
-    "allowedCallees": {
-      "react": ["createComponent"]
-    }
-  }]
-}
-```
-
 ## Options
 
 ### `allowedCallees`
@@ -94,11 +61,21 @@ With options:
 
 Enables generation of displayNames for certain called functions.
 
+```json
+{
+  "plugins": ["@probablyup/babel-plugin-react-displayname", {
+    "allowedCallees": {
+      "react": ["createComponent"]
+    }
+  }]
+}
+```
+
 #### Example
 
 By default, with `allowedCallees` set to `{ "react": ["createContext"] }`:
 
-```js
+```tsx
 import React, { createContext } from 'react';
 const FeatureContext = createContext();
 const AnotherContext = React.createContext();
@@ -106,10 +83,51 @@ const AnotherContext = React.createContext();
 
 is transformed into:
 
-```js
+```tsx
 import React, { createContext } from 'react';
 const FeatureContext = createContext();
 FeatureContext.displayName = "FeatureContext";
 const AnotherContext = React.createContext();
 AnotherContext.displayName = "AnotherContext";
 ```
+
+### `template`
+
+Allows for rudimentary templating with the generated `displayName`. For example:
+
+```json
+{
+  "plugins": ["@probablyup/babel-plugin-react-displayname", {
+    "template": "DS.%s",
+  }]
+}
+```
+
+#### Example
+
+from:
+
+```tsx
+const Linebreak = React.memo(() => {
+    return <br />;
+});
+
+const Img = function () {
+    return <img />;
+}
+```
+
+to:
+
+```tsx
+const Linebreak = React.memo(function _Linebreak() {
+  return <br />;
+});
+Linebreak.displayName = "DS.Linebreak";
+
+const Img = function () {
+  return <img />;
+};
+Img.displayName = "DS.Img";
+```
+
