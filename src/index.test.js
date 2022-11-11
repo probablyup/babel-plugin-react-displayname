@@ -31,10 +31,11 @@ describe('babelDisplayNamePlugin', () => {
         return <img/>;
       }`)
     ).toMatchInlineSnapshot(`
-      "foo.bar = function () {
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      foo.bar = function () {
         return React.createElement("img", null);
       };
-      foo.bar.displayName = /*#__PURE__*/"foo.bar";"
+      /*#__PURE__*/_applyDisplayName(foo.bar, "foo.bar");"
     `);
 
     expect(
@@ -43,10 +44,11 @@ describe('babelDisplayNamePlugin', () => {
         return <img/>;
       }`)
     ).toMatchInlineSnapshot(`
-      "const Test = function () {
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      const Test = function () {
         return React.createElement("img", null);
       };
-      Test.displayName = /*#__PURE__*/"Test";"
+      /*#__PURE__*/_applyDisplayName(Test, "Test");"
     `);
   });
 
@@ -57,10 +59,11 @@ describe('babelDisplayNamePlugin', () => {
         return <img/>;
       }`)
     ).toMatchInlineSnapshot(`
-      "foo.bar = function Foo() {
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      foo.bar = function Foo() {
         return React.createElement("img", null);
       };
-      foo.bar.displayName = /*#__PURE__*/"foo.bar";"
+      /*#__PURE__*/_applyDisplayName(foo.bar, "foo.bar");"
     `);
 
     expect(
@@ -69,10 +72,11 @@ describe('babelDisplayNamePlugin', () => {
         return <img/>;
       }`)
     ).toMatchInlineSnapshot(`
-      "const Test = function Foo() {
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      const Test = function Foo() {
         return React.createElement("img", null);
       };
-      Test.displayName = /*#__PURE__*/"Test";"
+      /*#__PURE__*/_applyDisplayName(Test, "Test");"
     `);
   });
 
@@ -83,10 +87,11 @@ describe('babelDisplayNamePlugin', () => {
         return <img/>;
       }`)
     ).toMatchInlineSnapshot(`
-      "foo.bar = () => {
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      foo.bar = () => {
         return React.createElement("img", null);
       };
-      foo.bar.displayName = /*#__PURE__*/"foo.bar";"
+      /*#__PURE__*/_applyDisplayName(foo.bar, "foo.bar");"
     `);
 
     expect(
@@ -95,18 +100,20 @@ describe('babelDisplayNamePlugin', () => {
         return <img/>;
       };`)
     ).toMatchInlineSnapshot(`
-      "const Test = () => {
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      const Test = () => {
         return React.createElement("img", null);
       };
-      Test.displayName = /*#__PURE__*/"Test";"
+      /*#__PURE__*/_applyDisplayName(Test, "Test");"
     `);
 
     expect(
       transform(`
       const Test = () => <img/>;`)
     ).toMatchInlineSnapshot(`
-      "const Test = () => React.createElement("img", null);
-      Test.displayName = /*#__PURE__*/"Test";"
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      const Test = () => React.createElement("img", null);
+      /*#__PURE__*/_applyDisplayName(Test, "Test");"
     `);
 
     expect(
@@ -123,11 +130,12 @@ describe('babelDisplayNamePlugin', () => {
         return <img/>;
       })`)
     ).toMatchInlineSnapshot(`
-      "import React from 'react';
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      import React from 'react';
       const Test = React.memo(() => {
         return React.createElement("img", null);
       });
-      Test.displayName = /*#__PURE__*/"Test";"
+      /*#__PURE__*/_applyDisplayName(Test, "Test");"
     `);
 
     expect(
@@ -139,13 +147,14 @@ describe('babelDisplayNamePlugin', () => {
         })
       };`)
     ).toMatchInlineSnapshot(`
-      "import React from 'react';
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      import React from 'react';
       const foo = {
         bar: React.memo(() => {
           return React.createElement("img", null);
         })
       };
-      foo.bar.displayName = /*#__PURE__*/"foo.bar";"
+      /*#__PURE__*/_applyDisplayName(foo.bar, "foo.bar");"
     `);
 
     expect(
@@ -155,11 +164,12 @@ describe('babelDisplayNamePlugin', () => {
         return <img/>;
       }))`)
     ).toMatchInlineSnapshot(`
-      "import React from 'react';
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      import React from 'react';
       const Test = React.memo(React.createRef((props, ref) => {
         return React.createElement("img", null);
       }));
-      Test.displayName = /*#__PURE__*/"Test";"
+      /*#__PURE__*/_applyDisplayName(Test, "Test");"
     `);
 
     expect(
@@ -169,11 +179,12 @@ describe('babelDisplayNamePlugin', () => {
         return <img/>;
       })`)
     ).toMatchInlineSnapshot(`
-      "import React from 'react';
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      import React from 'react';
       const Test = React.memo(function _Test(props, ref) {
         return React.createElement("img", null);
       });
-      Test.displayName = /*#__PURE__*/"Test";"
+      /*#__PURE__*/_applyDisplayName(Test, "Test");"
     `);
 
     expect(
@@ -183,11 +194,12 @@ describe('babelDisplayNamePlugin', () => {
         return <img/>;
       })`)
     ).toMatchInlineSnapshot(`
-      "import React from 'react';
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      import React from 'react';
       export const Test = React.memo(() => {
         return React.createElement("img", null);
       });
-      Test.displayName = /*#__PURE__*/"Test";"
+      /*#__PURE__*/_applyDisplayName(Test, "Test");"
     `);
   });
 
@@ -198,9 +210,10 @@ describe('babelDisplayNamePlugin', () => {
       const FeatureContext = createContext();
       `)
     ).toMatchInlineSnapshot(`
-      "import { createContext } from 'react';
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      import { createContext } from 'react';
       const FeatureContext = createContext();
-      FeatureContext.displayName = /*#__PURE__*/"FeatureContext";"
+      /*#__PURE__*/_applyDisplayName(FeatureContext, "FeatureContext");"
     `);
 
     expect(
@@ -209,9 +222,10 @@ describe('babelDisplayNamePlugin', () => {
       const FeatureContext = React.createContext();
       `)
     ).toMatchInlineSnapshot(`
-      "import React from 'react';
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      import React from 'react';
       const FeatureContext = React.createContext();
-      FeatureContext.displayName = /*#__PURE__*/"FeatureContext";"
+      /*#__PURE__*/_applyDisplayName(FeatureContext, "FeatureContext");"
     `);
 
     expect(
@@ -220,9 +234,10 @@ describe('babelDisplayNamePlugin', () => {
       const FeatureContext = React.createContext();
       `)
     ).toMatchInlineSnapshot(`
-      "import * as React from 'react';
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      import * as React from 'react';
       const FeatureContext = React.createContext();
-      FeatureContext.displayName = /*#__PURE__*/"FeatureContext";"
+      /*#__PURE__*/_applyDisplayName(FeatureContext, "FeatureContext");"
     `);
 
     expect(
@@ -238,9 +253,10 @@ describe('babelDisplayNamePlugin', () => {
         }
       )
     ).toMatchInlineSnapshot(`
-      "import React from 'path/to/react';
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      import React from 'path/to/react';
       const FeatureContext = React.createContext();
-      FeatureContext.displayName = /*#__PURE__*/"FeatureContext";"
+      /*#__PURE__*/_applyDisplayName(FeatureContext, "FeatureContext");"
     `);
 
     expect(
@@ -250,11 +266,13 @@ describe('babelDisplayNamePlugin', () => {
       foo.bar1 = createComponentWithProxy();
       `)
     ).toMatchInlineSnapshot(`
-      "import { createComponent, createComponentWithProxy } from 'react-fela';
+      "import _applyDisplayName2 from "@probablyup/babel-plugin-react-displayname/apply";
+      import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      import { createComponent, createComponentWithProxy } from 'react-fela';
       foo.bar = createComponent();
-      foo.bar.displayName = /*#__PURE__*/"foo.bar";
+      /*#__PURE__*/_applyDisplayName(foo.bar, "foo.bar");
       foo.bar1 = createComponentWithProxy();
-      foo.bar1.displayName = /*#__PURE__*/"foo.bar1";"
+      /*#__PURE__*/_applyDisplayName2(foo.bar1, "foo.bar1");"
     `);
 
     expect(
@@ -263,11 +281,12 @@ describe('babelDisplayNamePlugin', () => {
       foo = { bar: createComponent() }
       `)
     ).toMatchInlineSnapshot(`
-      "import { createComponent } from 'react-fela';
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      import { createComponent } from 'react-fela';
       foo = {
         bar: createComponent()
       };
-      foo.bar.displayName = /*#__PURE__*/"foo.bar";"
+      /*#__PURE__*/_applyDisplayName(foo.bar, "foo.bar");"
     `);
 
     expect(
@@ -276,9 +295,10 @@ describe('babelDisplayNamePlugin', () => {
       const Test = createComponent();
       `)
     ).toMatchInlineSnapshot(`
-      "import { createComponent } from 'react-fela';
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      import { createComponent } from 'react-fela';
       const Test = createComponent();
-      Test.displayName = /*#__PURE__*/"Test";"
+      /*#__PURE__*/_applyDisplayName(Test, "Test");"
     `);
   });
 
@@ -291,12 +311,13 @@ describe('babelDisplayNamePlugin', () => {
         }
       };`)
     ).toMatchInlineSnapshot(`
-      "const Components = {
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      const Components = {
         path: {
           test: () => React.createElement("img", null)
         }
       };
-      Components.path.test.displayName = /*#__PURE__*/"Components.path.test";"
+      /*#__PURE__*/_applyDisplayName(Components.path.test, "Components.path.test");"
     `);
 
     expect(
@@ -308,13 +329,14 @@ describe('babelDisplayNamePlugin', () => {
         }
       };`)
     ).toMatchInlineSnapshot(`
-      "const pathStr = 'path';
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      const pathStr = 'path';
       const Components = {
         [pathStr]: {
           test: () => React.createElement("img", null)
         }
       };
-      Components[pathStr].test.displayName = /*#__PURE__*/"Components[pathStr].test";"
+      /*#__PURE__*/_applyDisplayName(Components[pathStr].test, "Components[pathStr].test");"
     `);
 
     expect(
@@ -323,12 +345,13 @@ describe('babelDisplayNamePlugin', () => {
         test: function() { return <img/> }
       };`)
     ).toMatchInlineSnapshot(`
-      "const Components = {
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      const Components = {
         test: function () {
           return React.createElement("img", null);
         }
       };
-      Components.test.displayName = /*#__PURE__*/"Components.test";"
+      /*#__PURE__*/_applyDisplayName(Components.test, "Components.test");"
     `);
 
     expect(
@@ -337,12 +360,13 @@ describe('babelDisplayNamePlugin', () => {
         test: function Foo() { return <img/> }
       };`)
     ).toMatchInlineSnapshot(`
-      "const Components = {
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      const Components = {
         test: function Foo() {
           return React.createElement("img", null);
         }
       };
-      Components.test.displayName = /*#__PURE__*/"Components.test";"
+      /*#__PURE__*/_applyDisplayName(Components.test, "Components.test");"
     `);
   });
 
@@ -358,14 +382,15 @@ describe('babelDisplayNamePlugin', () => {
       };
       `)
     ).toMatchInlineSnapshot(`
-      "const Components = {
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      const Components = {
         path: {
           test(props) {
             return React.createElement("img", null);
           }
         }
       };
-      Components.path.test.displayName = /*#__PURE__*/"Components.path.test";"
+      /*#__PURE__*/_applyDisplayName(Components.path.test, "Components.path.test");"
     `);
 
     expect(
@@ -379,14 +404,15 @@ describe('babelDisplayNamePlugin', () => {
       };
       `)
     ).toMatchInlineSnapshot(`
-      "const Components = {
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      const Components = {
         [foo[bar.foobar].baz]: {
           test(props) {
             return React.createElement("img", null);
           }
         }
       };
-      Components[foo[bar.foobar].baz].test.displayName = /*#__PURE__*/"Components[foo[bar.foobar].baz].test";"
+      /*#__PURE__*/_applyDisplayName(Components[foo[bar.foobar].baz].test, "Components[foo[bar.foobar].baz].test");"
     `);
   });
 
@@ -396,8 +422,9 @@ describe('babelDisplayNamePlugin', () => {
       const Component = (props) => <><img {...props} /></>;
       `)
     ).toMatchInlineSnapshot(`
-      "const Component = props => React.createElement(React.Fragment, null, React.createElement("img", props));
-      Component.displayName = /*#__PURE__*/"Component";"
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      const Component = props => React.createElement(React.Fragment, null, React.createElement("img", props));
+      /*#__PURE__*/_applyDisplayName(Component, "Component");"
     `);
   });
 
@@ -411,16 +438,20 @@ describe('babelDisplayNamePlugin', () => {
 
       `)
     ).toMatchInlineSnapshot(`
-      "const Component = () => false ? React.createElement("img", null) : null;
-      Component.displayName = /*#__PURE__*/"Component";
+      "import _applyDisplayName4 from "@probablyup/babel-plugin-react-displayname/apply";
+      import _applyDisplayName3 from "@probablyup/babel-plugin-react-displayname/apply";
+      import _applyDisplayName2 from "@probablyup/babel-plugin-react-displayname/apply";
+      import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      const Component = () => false ? React.createElement("img", null) : null;
+      /*#__PURE__*/_applyDisplayName(Component, "Component");
       const Component1 = () => React.createElement("img", null) || null;
-      Component1.displayName = /*#__PURE__*/"Component1";
+      /*#__PURE__*/_applyDisplayName2(Component1, "Component1");
       const Component2 = () => [React.createElement("img", null)];
-      Component2.displayName = /*#__PURE__*/"Component2";
+      /*#__PURE__*/_applyDisplayName3(Component2, "Component2");
       const Component3 = () => {
         return React.createElement("img", null);
       };
-      Component3.displayName = /*#__PURE__*/"Component3";"
+      /*#__PURE__*/_applyDisplayName4(Component3, "Component3");"
     `);
   });
 
@@ -430,8 +461,9 @@ describe('babelDisplayNamePlugin', () => {
       var Test = () => <img/>
       `)
     ).toMatchInlineSnapshot(`
-      "var Test = () => React.createElement("img", null);
-      Test.displayName = /*#__PURE__*/"Test";"
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      var Test = () => React.createElement("img", null);
+      /*#__PURE__*/_applyDisplayName(Test, "Test");"
     `);
 
     expect(
@@ -439,8 +471,9 @@ describe('babelDisplayNamePlugin', () => {
       let Test = () => <img/>
       `)
     ).toMatchInlineSnapshot(`
-      "let Test = () => React.createElement("img", null);
-      Test.displayName = /*#__PURE__*/"Test";"
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      let Test = () => React.createElement("img", null);
+      /*#__PURE__*/_applyDisplayName(Test, "Test");"
     `);
 
     expect(
@@ -448,8 +481,9 @@ describe('babelDisplayNamePlugin', () => {
       export const Test = () => <img/>
       `)
     ).toMatchInlineSnapshot(`
-      "export const Test = () => React.createElement("img", null);
-      Test.displayName = /*#__PURE__*/"Test";"
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      export const Test = () => React.createElement("img", null);
+      /*#__PURE__*/_applyDisplayName(Test, "Test");"
     `);
   });
 
@@ -513,8 +547,9 @@ describe('babelDisplayNamePlugin', () => {
       const Component = (props) => <>{() => <img {...props} />}</>;
       `)
     ).toMatchInlineSnapshot(`
-      "const Component = props => React.createElement(React.Fragment, null, () => React.createElement("img", props));
-      Component.displayName = /*#__PURE__*/"Component";"
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      const Component = props => React.createElement(React.Fragment, null, () => React.createElement("img", props));
+      /*#__PURE__*/_applyDisplayName(Component, "Component");"
     `);
 
     expect(
@@ -527,11 +562,12 @@ describe('babelDisplayNamePlugin', () => {
       };
       `)
     ).toMatchInlineSnapshot(`
-      "styledComponents.withTheme = Component => {
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      styledComponents.withTheme = Component => {
         const WithDefaultTheme = props => {
           return React.createElement("div", props);
         };
-        WithDefaultTheme.displayName = /*#__PURE__*/"WithDefaultTheme";
+        /*#__PURE__*/_applyDisplayName(WithDefaultTheme, "WithDefaultTheme");
         return WithDefaultTheme;
       };"
     `);
@@ -574,13 +610,14 @@ describe('babelDisplayNamePlugin', () => {
       };
       `)
     ).toMatchInlineSnapshot(`
-      "const Component = props => {
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      const Component = props => {
         const LookUp = (innerProps => ({
           a: () => React.createElement("img", innerProps)
         }))(props);
         return React.createElement("div", null, () => LookUp.a);
       };
-      Component.displayName = /*#__PURE__*/"Component";"
+      /*#__PURE__*/_applyDisplayName(Component, "Component");"
     `);
   });
 
@@ -602,10 +639,11 @@ describe('babelDisplayNamePlugin', () => {
       foo.bar = () => <img/>;
       `)
     ).toMatchInlineSnapshot(`
-      "foo.bar = () => React.createElement("img", null);
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      foo.bar = () => React.createElement("img", null);
       foo.bar.displayName = 'test';
       foo.bar = () => React.createElement("img", null);
-      foo.bar.displayName = /*#__PURE__*/"foo.bar";"
+      /*#__PURE__*/_applyDisplayName(foo.bar, "foo.bar");"
     `);
 
     expect(
@@ -615,10 +653,11 @@ describe('babelDisplayNamePlugin', () => {
       foo.bar = () => <img/>;
       `)
     ).toMatchInlineSnapshot(`
-      "foo.bar = () => React.createElement("img", null);
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      foo.bar = () => React.createElement("img", null);
       foo.bar.displayName = 'foo.bar';
       foo.bar = () => React.createElement("img", null);
-      foo.bar.displayName = /*#__PURE__*/"foo.bar";"
+      /*#__PURE__*/_applyDisplayName(foo.bar, "foo.bar");"
     `);
   });
 
@@ -631,9 +670,10 @@ describe('babelDisplayNamePlugin', () => {
       const Test = () => <img/>;
       `)
     ).toMatchInlineSnapshot(`
-      "() => {
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      () => {
         const Test = () => React.createElement("img", null);
-        Test.displayName = /*#__PURE__*/"Test";
+        /*#__PURE__*/_applyDisplayName(Test, "Test");
       };
       const Test = () => React.createElement("img", null);"
     `);
@@ -646,10 +686,10 @@ describe('babelDisplayNamePlugin', () => {
       foo.bar = () => <br/>;
       `)
     ).toMatchInlineSnapshot(`
-      "foo.bar = () => React.createElement("img", null);
-      foo.bar.displayName = /*#__PURE__*/"foo.bar";
-      foo.bar = () => React.createElement("br", null);
-      foo.bar.displayName = /*#__PURE__*/"foo.bar";"
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      foo.bar = () => React.createElement("img", null);
+      /*#__PURE__*/_applyDisplayName(foo.bar, "foo.bar");
+      foo.bar = () => React.createElement("br", null);"
     `);
 
     expect(
@@ -658,8 +698,9 @@ describe('babelDisplayNamePlugin', () => {
       delete foo.bar;
       `)
     ).toMatchInlineSnapshot(`
-      "foo.bar = () => React.createElement("img", null);
-      foo.bar.displayName = /*#__PURE__*/"foo.bar";
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      foo.bar = () => React.createElement("img", null);
+      /*#__PURE__*/_applyDisplayName(foo.bar, "foo.bar");
       delete foo.bar;"
     `);
 
@@ -670,8 +711,9 @@ describe('babelDisplayNamePlugin', () => {
       foo = null;
       `)
     ).toMatchInlineSnapshot(`
-      "foo.bar = () => React.createElement("img", null);
-      foo.bar.displayName = /*#__PURE__*/"foo.bar";
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      foo.bar = () => React.createElement("img", null);
+      /*#__PURE__*/_applyDisplayName(foo.bar, "foo.bar");
       function irrelvant() {}
       ;
       foo = null;"
@@ -724,8 +766,9 @@ describe('babelDisplayNamePlugin', () => {
       const Components = () => <div>{() => <img/>}</div>;
       `)
     ).toMatchInlineSnapshot(`
-      "const Components = () => React.createElement("div", null, () => React.createElement("img", null));
-      Components.displayName = /*#__PURE__*/"Components";"
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      const Components = () => React.createElement("div", null, () => React.createElement("img", null));
+      /*#__PURE__*/_applyDisplayName(Components, "Components");"
     `);
   });
 
@@ -936,12 +979,13 @@ describe('babelDisplayNamePlugin', () => {
       const Test = () => <img foo={{ bar: () => <img/> }} />;
       `)
     ).toMatchInlineSnapshot(`
-      "const Test = () => React.createElement("img", {
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      const Test = () => React.createElement("img", {
         foo: {
           bar: () => React.createElement("img", null)
         }
       });
-      Test.displayName = /*#__PURE__*/"Test";"
+      /*#__PURE__*/_applyDisplayName(Test, "Test");"
     `);
   });
 
@@ -1007,14 +1051,15 @@ describe('babelDisplayNamePlugin', () => {
         )
     `)
     ).toMatchInlineSnapshot(`
-      "import React from 'react';
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      import React from 'react';
       const Foo = React.forwardRef((props, ref) => {
         return React.createElement('div', {
           ...props,
           ref
         });
       });
-      Foo.displayName = /*#__PURE__*/"Foo";"
+      /*#__PURE__*/_applyDisplayName(Foo, "Foo");"
     `);
   });
 
@@ -1032,14 +1077,15 @@ describe('babelDisplayNamePlugin', () => {
         )
     `)
     ).toMatchInlineSnapshot(`
-      "import React from 'react';
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      import React from 'react';
       const Foo = React.memo(React.forwardRef((props, ref) => {
         return React.createElement('div', {
           ...props,
           ref
         });
       }));
-      Foo.displayName = /*#__PURE__*/"Foo";"
+      /*#__PURE__*/_applyDisplayName(Foo, "Foo");"
     `);
   });
 
@@ -1050,10 +1096,11 @@ describe('babelDisplayNamePlugin', () => {
         return <img/>;
       }`)
     ).toMatchInlineSnapshot(`
-      "const Test = function () {
+      "import _applyDisplayName from "@probablyup/babel-plugin-react-displayname/apply";
+      const Test = function () {
         return React.createElement("img", null);
       };
-      Test.displayName = /*#__PURE__*/"Foo.Test";"
+      /*#__PURE__*/_applyDisplayName(Test, "Foo.Test");"
     `);
   });
 });

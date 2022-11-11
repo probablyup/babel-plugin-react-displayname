@@ -1,3 +1,4 @@
+const { addDefault } = require('@babel/helper-module-imports');
 const { declare } = require('@babel/helper-plugin-utils');
 const { default: annotateAsPure } = require('@babel/helper-annotate-as-pure');
 
@@ -256,8 +257,11 @@ function addDisplayNamesToFunctionComponent(types, path, options) {
   if (seenDisplayNames.has(name) && !hasBeenAssignedPrev(types, assignmentPath, pattern, name)) {
     return;
   }
+
   // skip unnecessary addition of name if it is reassigned later on
   if (hasBeenAssignedNext(types, assignmentPath, pattern)) return;
+
+  // at this point we're ready to start pushing code
 
   if (hasCallee) {
     // if we're getting called by some wrapper function,
@@ -265,9 +269,21 @@ function addDisplayNamesToFunctionComponent(types, path, options) {
     setInternalFunctionName(types, path, name);
   }
 
-  const displayNameStatement = createDisplayNameStatement(types, componentIdentifiers, name);
+  // inject the helper if it's not already present
+  const helper = addDefault(assignmentPath, '@probablyup/babel-plugin-react-displayname/apply', {
+    nameHint: 'applyDisplayName',
+  });
 
+  const displayNameStatement = createDisplayNameStatement(
+    types,
+    componentIdentifiers,
+    name,
+    helper
+  );
+
+  // inject our helper call
   assignmentPath.insertAfter(displayNameStatement);
+
   seenDisplayNames.add(name);
 }
 
@@ -351,20 +367,19 @@ function hasBeenAssignedNext(types, assignmentPath, pattern) {
  * @param {Types} types content of @babel/types package
  * @param {componentIdentifier[]} componentIdentifiers list of { id, computed } objects
  * @param {string} displayName name of the function component
+ * @param {Identifier} helperIdentifier local name of the injected displayName application helper
  */
-function createDisplayNameStatement(types, componentIdentifiers, displayName) {
+function createDisplayNameStatement(types, componentIdentifiers, displayName, helperIdentifier) {
   const node = createMemberExpression(types, componentIdentifiers);
-  const result = types.stringLiteral(displayName);
 
-  annotateAsPure(result);
+  const expression = types.callExpression(helperIdentifier, [
+    node,
+    types.stringLiteral(displayName),
+  ]);
 
-  return types.expressionStatement(
-    types.assignmentExpression(
-      '=',
-      types.memberExpression(node, types.identifier('displayName')),
-      result
-    )
-  );
+  annotateAsPure(expression);
+
+  return types.expressionStatement(expression);
 }
 
 /**
