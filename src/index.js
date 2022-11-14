@@ -1,4 +1,3 @@
-const { addDefault } = require('@babel/helper-module-imports');
 const { declare } = require('@babel/helper-plugin-utils');
 const { default: annotateAsPure } = require('@babel/helper-annotate-as-pure');
 
@@ -269,19 +268,8 @@ function addDisplayNamesToFunctionComponent(types, path, options) {
     setInternalFunctionName(types, path, name);
   }
 
-  // inject the helper if it's not already present
-  const helper = addDefault(assignmentPath, '@probablyup/babel-plugin-react-displayname/apply', {
-    nameHint: 'applyDisplayName',
-  });
+  const displayNameStatement = createDisplayNameStatement(types, componentIdentifiers, name);
 
-  const displayNameStatement = createDisplayNameStatement(
-    types,
-    componentIdentifiers,
-    name,
-    helper
-  );
-
-  // inject our helper call
   assignmentPath.insertAfter(displayNameStatement);
 
   seenDisplayNames.add(name);
@@ -367,15 +355,19 @@ function hasBeenAssignedNext(types, assignmentPath, pattern) {
  * @param {Types} types content of @babel/types package
  * @param {componentIdentifier[]} componentIdentifiers list of { id, computed } objects
  * @param {string} displayName name of the function component
- * @param {Identifier} helperIdentifier local name of the injected displayName application helper
  */
 function createDisplayNameStatement(types, componentIdentifiers, displayName, helperIdentifier) {
   const node = createMemberExpression(types, componentIdentifiers);
 
-  const expression = types.callExpression(helperIdentifier, [
-    node,
-    types.stringLiteral(displayName),
-  ]);
+  const expression = types.callExpression(
+    types.memberExpression(types.identifier('Object'), types.identifier('assign')),
+    [
+      node,
+      types.objectExpression([
+        types.objectProperty(types.stringLiteral('displayName'), types.stringLiteral(displayName)),
+      ]),
+    ]
+  );
 
   annotateAsPure(expression);
 
