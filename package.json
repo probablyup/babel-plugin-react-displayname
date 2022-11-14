@@ -1,6 +1,6 @@
 {
   "name": "@probablyup/babel-plugin-react-displayname",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Babel plugin for automatic React display name generation with tree-shaking and prefix support, forked from @zendesk/babel-plugin-react-displayname",
   "main": "src/index.js",
   "author": "Kai Li <hello@lik.ai>",
