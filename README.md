@@ -131,3 +131,64 @@ const Img = function () {
 Img.displayName = "DS.Img";
 ```
 
+### `skipPureAnnotations`
+
+Allows you to skip `#__PURE__` annotations for displayName property assignment for tree-shaking support. `false` by default.
+
+#### Example 1: 
+
+```
+{
+    "plugins": ["@probablyup/babel-plugin-react-displayname", {
+       "skipPureAnnotations": false
+    }]
+}
+```
+
+from: 
+
+```jsx
+const Img = function () {
+  return <img />;
+};
+```
+
+to:
+
+```jsx
+const Img = function () {
+  return <img />;
+};
+/*#__PURE__*/Object.assign(Img, {
+    "displayName": "Img"
+});
+```
+
+#### Example 2:
+
+```
+{
+    "plugins": ["@probablyup/babel-plugin-react-displayname", {
+       "skipPureAnnotations": true
+    }]
+}
+```
+
+from:
+
+```jsx
+const Img = function () {
+  return <img />;
+};
+```
+
+to:
+
+```jsx
+const Img = function () {
+  return <img />;
+};
+/*#__PURE__*/Object.assign(Img, {
+    "displayName": "Img"
+});
+```

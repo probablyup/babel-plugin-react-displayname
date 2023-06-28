@@ -23,6 +23,11 @@ const transformWithTemplate = (code) =>
     template: 'Foo.%s',
   });
 
+const transformWithoutPureAnnotations = (code) =>
+    transform(code, {
+      skipPureAnnotations: true,
+    });
+
 describe('babelDisplayNamePlugin', () => {
   it('should add display name to function expression components', () => {
     expect(
@@ -1148,6 +1153,22 @@ describe('babelDisplayNamePlugin', () => {
       };
       /*#__PURE__*/Object.assign(Test, {
         "displayName": "Foo.Test"
+      });"
+    `);
+  });
+
+  it('should not add pure annotations if the skipPureAnnotations is true', () => {
+    expect(
+        transformWithoutPureAnnotations(`
+      const Test = function() {
+        return <img/>;
+      }`)
+    ).toMatchInlineSnapshot(`
+      "const Test = function () {
+        return React.createElement("img", null);
+      };
+      Object.assign(Test, {
+        "displayName": "Test"
       });"
     `);
   });

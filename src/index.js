@@ -268,7 +268,7 @@ function addDisplayNamesToFunctionComponent(types, path, options) {
     setInternalFunctionName(types, path, name);
   }
 
-  const displayNameStatement = createDisplayNameStatement(types, componentIdentifiers, name);
+  const displayNameStatement = createDisplayNameStatement(types, componentIdentifiers, name, !options.skipPureAnnotations);
 
   assignmentPath.insertAfter(displayNameStatement);
 
@@ -355,8 +355,9 @@ function hasBeenAssignedNext(types, assignmentPath, pattern) {
  * @param {Types} types content of @babel/types package
  * @param {componentIdentifier[]} componentIdentifiers list of { id, computed } objects
  * @param {string} displayName name of the function component
+ * @param {boolean} pureAnnotationsEnabled flag for prepanding the #__PURE__ comments to the displayName statement
  */
-function createDisplayNameStatement(types, componentIdentifiers, displayName, helperIdentifier) {
+function createDisplayNameStatement(types, componentIdentifiers, displayName, pureAnnotationsEnabled) {
   const node = createMemberExpression(types, componentIdentifiers);
 
   const expression = types.callExpression(
@@ -369,7 +370,9 @@ function createDisplayNameStatement(types, componentIdentifiers, displayName, he
     ]
   );
 
-  annotateAsPure(expression);
+  if (pureAnnotationsEnabled) {
+    annotateAsPure(expression);
+  }
 
   return types.expressionStatement(expression);
 }
